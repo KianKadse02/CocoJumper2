@@ -41,6 +41,8 @@ public class PlayerMovement : MonoBehaviour
     private float wallRunTimer = 0f;
     private Vector3 wallRunDirection; // Direction we're running along the wall
 
+    public PlayerUI playerUI;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
@@ -98,6 +100,9 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        playerUI.SetWallRunBarVisibility(true);
+        playerUI.UpdateWallRunBar(wallRunTimer, maxWallRunDuration);
+
         // Calculate wall run direction (perpendicular to wall normal)
         Vector3 wallNormal = wallDetection.GetWallNormal();
         // Run along the wall, perpendicular to its surface
@@ -122,6 +127,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void StopWallRun()
     {
+        playerUI.SetWallRunBarVisibility(false);
         wallRunTimer = 0f;
         wasOnwall = true;
         Debug.Log("Stopped wall run");
