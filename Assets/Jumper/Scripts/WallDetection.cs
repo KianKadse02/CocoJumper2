@@ -76,6 +76,11 @@ public class WallDetection : MonoBehaviour
             }
         }
 
+        if (isNearRunnableWall)
+        {
+            print("can run");
+        }
+
         // Draw rays even when not hitting (for debugging)
         if (!isNearRunnableWall && !isNearClimbableWall)
         {

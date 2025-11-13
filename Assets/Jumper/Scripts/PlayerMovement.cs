@@ -26,6 +26,21 @@ public class PlayerMovement : MonoBehaviour
 
     private WallDetection wallDetection;
 
+    [Header("Wall Run Settings")]
+    public float wallRunSpeed = 8f;
+    [Tooltip("Upward force to fight gravity while wall running")]
+    public float wallRunGravityCounter = 5f;
+    [Tooltip("How long can you wall run before falling (seconds)")]
+    public float maxWallRunDuration = 2f;
+    [Tooltip("Force applied when jumping off a wall")]
+    public float wallJumpForce = 15f;
+    [Tooltip("How much force pushes you away from wall when jumping")]
+    public float wallJumpAwayForce = 8f;
+
+    private bool wasOnwall = false;
+    private float wallRunTimer = 0f;
+    private Vector3 wallRunDirection; // Direction we're running along the wall
+
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
@@ -34,14 +49,23 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 moveDirection = transform.right * currentInput.x + transform.forward * currentInput.z;
-        Vector3 horizontalVelocity = moveDirection * moveMentSpeed;
-        body.linearVelocity = new Vector3(horizontalVelocity.x, body.linearVelocity.y, horizontalVelocity.z);
+        
 
-        if (body.linearVelocity.y < 0)
+        if (wallDetection.isNearRunnableWall)
         {
-            body.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+            UpdateWallRun();
+        } else
+        {
+            Vector3 moveDirection = transform.right * currentInput.x + transform.forward * currentInput.z;
+            Vector3 horizontalVelocity = moveDirection * moveMentSpeed;
+            body.linearVelocity = new Vector3(horizontalVelocity.x, body.linearVelocity.y, horizontalVelocity.z);
+
+            if (body.linearVelocity.y < 0)
+            {
+                body.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+            }
         }
+            
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -55,14 +79,58 @@ public class PlayerMovement : MonoBehaviour
         if (!wallDetection.isAirborne)
         {
             usedJumps = 0;
+            wasOnwall = false;
         }
     }
+
+    private void UpdateWallRun()
+    {
+        wallRunTimer += Time.fixedDeltaTime;
+
+        // Check if wall run should end
+        if (wallRunTimer >= maxWallRunDuration || !wallDetection.IsNearRunnableWall())
+        {
+            StopWallRun();
+            return;
+        }
+        if (wasOnwall == true)
+        {
+            return;
+        }
+
+        // Calculate wall run direction (perpendicular to wall normal)
+        Vector3 wallNormal = wallDetection.GetWallNormal();
+        // Run along the wall, perpendicular to its surface
+        wallRunDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
+
+        // Determine which direction to run based on player's current velocity
+        if (Vector3.Dot(body.linearVelocity, wallRunDirection) < 0)
+        {
+            wallRunDirection = -wallRunDirection;
+        }
+
+        // Apply wall run movement
+        Vector3 wallRunVelocity = wallRunDirection * wallRunSpeed;
+
+        // Counter gravity with upward force (gradually weakens over time)
+        float gravityCounterStrength = Mathf.Lerp(wallRunGravityCounter, 0, wallRunTimer / maxWallRunDuration);
+        float upwardForce = gravityCounterStrength;
+
+        body.linearVelocity = new Vector3(wallRunVelocity.x, upwardForce, wallRunVelocity.z);
+
+        Debug.DrawRay(transform.position, wallRunDirection * 2f, Color.cyan);
+    }
+    private void StopWallRun()
+    {
+        wallRunTimer = 0f;
+        wasOnwall = true;
+        Debug.Log("Stopped wall run");
+    }
+
 
     private void OnMove(InputValue value)
     {
         currentInput = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
-        print(currentInput.ToString());
-        print("onmove");
     }
 
     private void OnLook(InputValue value)
@@ -88,7 +156,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnJump()
     {
-        if (!wallDetection.isAirborne)
+        if (!wallDetection.isAirborne && !wallDetection.isNearRunnableWall)
         {
             body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
         }  else if (wallDetection.isAirborne && usedJumps < numJumps)
@@ -96,6 +164,22 @@ public class PlayerMovement : MonoBehaviour
             body.linearVelocity = new Vector3(body.linearVelocity.x, 0, body.linearVelocity.z);
             body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
             usedJumps++;
+        } else if (wallDetection.isNearRunnableWall && !wasOnwall)
+        {
+            body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
+            Vector3 wallNormal = wallDetection.GetWallNormal();
+
+            // Jump up and away from wall
+            Vector3 jumpDirection = (Vector3.up + wallNormal).normalized;
+
+            // Stop current wall interaction
+            StopWallRun();
+
+            // Apply jump force
+            body.linearVelocity = Vector3.zero; // Reset velocity first
+            body.AddForce(jumpDirection * wallJumpForce, ForceMode.Impulse);
+            body.AddForce(wallNormal * wallJumpAwayForce, ForceMode.Impulse);
+
         }
     }
 }

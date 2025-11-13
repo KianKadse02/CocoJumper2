@@ -2430,7 +2430,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 205297899}
   serializedVersion: 5
-  m_Mass: 10
+  m_Mass: 15
   m_LinearDamping: 0
   m_AngularDamping: Infinity
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2446,9 +2446,9 @@ Rigidbody:
   m_ImplicitTensor: 0
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!136 &205297901
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2537,7 +2537,7 @@ Transform:
   m_GameObject: {fileID: 205297899}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.55, y: 0, z: 0}
+  m_LocalPosition: {x: 6.55, y: 12.75, z: 567.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2592,6 +2592,11 @@ MonoBehaviour:
   numJumps: 1
   playerCamera: {fileID: 330585545}
   lookSensitivity: 70
+  wallRunSpeed: 24.06
+  wallRunGravityCounter: 5
+  maxWallRunDuration: 2
+  wallJumpForce: 15
+  wallJumpAwayForce: 8
 --- !u!114 &205297908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3705,7 +3710,7 @@ Transform:
   m_GameObject: {fileID: 333821756}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -738.4, y: 82.399994, z: -64.599976}
+  m_LocalPosition: {x: -738.4, y: 52.5, z: -69.4}
   m_LocalScale: {x: 309.49554, y: 67.9, z: 3.6770568}
   m_ConstrainProportionsScale: 0
   m_Children: []
