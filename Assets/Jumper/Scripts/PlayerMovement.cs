@@ -96,6 +96,12 @@ public class PlayerMovement : MonoBehaviour
         }
             
     }
+
+    public void AddAirJump()
+    {
+        usedJumps--;
+        playerUI?.UpdateAirJumpText(numJumps - usedJumps);
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

@@ -3325,6 +3325,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveMentSpeed: 15
   decreaseSpeed: 75
+  sprintMultiplieer: 4.62
   jumpFactor: 100
   fallMultiplier: 2.5
   numJumps: 2
