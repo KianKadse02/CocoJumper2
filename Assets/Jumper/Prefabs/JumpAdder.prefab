@@ -124,5 +124,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5cbaa75dcace5478b3d8ca0b0dcb85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpCollectible
-  collectionEffect: {fileID: 0}
-  collectionSound: {fileID: 0}
+  collectionEffect: {fileID: 9163842254569548763, guid: a425379246e575b48ae020cb08f79ac9, type: 3}
+  collectionSound: {fileID: 8300000, guid: a6aa0ef14e1b87f4481d1eef7854fb54, type: 3}
