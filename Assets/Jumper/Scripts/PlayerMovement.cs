@@ -9,8 +9,10 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody body;
     public float moveMentSpeed = 10;
     public float decreaseSpeed = 75f;
+    public float sprintMultiplieer = 1.3f;
     public float jumpFactor;
     protected Vector3 currentInput;
+    protected bool isSprinting;
 
     public float fallMultiplier = 2.5f;
 
@@ -72,6 +74,11 @@ public class PlayerMovement : MonoBehaviour
             // 2. Calculate the target velocity based on player input
             Vector3 targetVelocity = (transform.right * currentInput.x + transform.forward * currentInput.z) * moveMentSpeed;
 
+            if (isSprinting)
+            {
+                targetVelocity *= sprintMultiplieer;
+            }
+
             // 3. Define how quickly the player can change speed (acceleration)
             // This value prevents instant, jerky speed changes. Higher is snappier.
             float maxSpeedChange = decreaseSpeed * Time.fixedDeltaTime;
@@ -106,6 +113,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public bool IsWallRunning()
+    {
+        return wallDetection.isNearClimbableWall && !wasOnwall;
+    }
+
     private void UpdateWallRun()
     {
         wallRunTimer += Time.fixedDeltaTime;
@@ -138,6 +150,11 @@ public class PlayerMovement : MonoBehaviour
         // Apply wall run movement
         Vector3 wallRunVelocity = wallRunDirection * wallRunSpeed;
 
+        if (isSprinting)
+        {
+            wallRunVelocity *= sprintMultiplieer;
+        }
+
         // Counter gravity with upward force (gradually weakens over time)
         float gravityCounterStrength = Mathf.Lerp(wallRunGravityCounter, 0, wallRunTimer / maxWallRunDuration);
         float upwardForce = gravityCounterStrength;
@@ -164,6 +181,11 @@ public class PlayerMovement : MonoBehaviour
     private void OnLook(InputValue value)
     {
         lookInput = value.Get<Vector2>();
+    }
+
+    private void OnSprint(InputValue input)
+    {
+        isSprinting = input.isPressed;
     }
 
     private void OnJump()
