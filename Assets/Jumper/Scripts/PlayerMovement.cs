@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     public Camera playerCamera;
     public float lookSensitivity = 100f;
     private float xRotation = 0f; // Stores the current up/down rotation of the camera
+    private Vector2 lookInput;
 
 
     private WallDetection wallDetection;
@@ -52,7 +53,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        float mouseX = lookInput.x * lookSensitivity * Time.deltaTime;
+        float mouseY = lookInput.y * lookSensitivity * Time.deltaTime;
 
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        transform.Rotate(Vector3.up * mouseX);
         if (wallDetection.isNearRunnableWall && !wasOnwall)
         {
             UpdateWallRun();
@@ -155,23 +163,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnLook(InputValue value)
     {
-        // Get mouse input from the InputValue
-        Vector2 lookInput = value.Get<Vector2>();
-        float mouseX = lookInput.x * lookSensitivity * Time.deltaTime;
-        float mouseY = lookInput.y * lookSensitivity * Time.deltaTime;
-
-        // --- Vertical Rotation (Pitch) ---
-        // We subtract mouseY from xRotation because a positive Y input should rotate the camera down, and vice-versa
-        xRotation -= mouseY;
-        // Clamp the vertical rotation to prevent flipping upside down (e.g., between -90 and 90 degrees)
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        // Apply the rotation to the camera
-        playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-
-        // --- Horizontal Rotation (Yaw) ---
-        // Rotate the entire player body left and right
-        transform.Rotate(Vector3.up * mouseX);
+        lookInput = value.Get<Vector2>();
     }
 
     private void OnJump()
