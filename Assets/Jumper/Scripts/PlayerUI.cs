@@ -1,37 +1,56 @@
 using UnityEngine;
-using UnityEngine.UI; // Required for accessing UI elements like Slider
+using UnityEngine.UI;
+using TMPro; // 1. Add this line for TextMeshPro
 
 public class PlayerUI : MonoBehaviour
 {
     [Header("Wall Run UI")]
-    public Slider wallRunSlider; // Drag your Slider UI element here in the Inspector
-    public GameObject wallRunBarContainer; // The parent object of the slider to easily hide/show it
+    public Slider wallRunSlider;
+    public GameObject wallRunBarContainer;
+
+    [Header("Air Jump UI")]
+    // 2. Add this variable for the text
+    public TextMeshProUGUI airJumpText;
 
     private void Start()
     {
-        // Ensure the bar is hidden when the game starts
         if (wallRunBarContainer != null)
         {
             wallRunBarContainer.SetActive(false);
         }
     }
 
-    // This function will be called from the PlayerMovement script
     public void UpdateWallRunBar(float currentDuration, float maxDuration)
     {
         if (wallRunSlider == null) return;
 
-        // Calculate the remaining time as a value between 0 and 1
         float remainingValue = (maxDuration - currentDuration) / maxDuration;
         wallRunSlider.value = remainingValue;
     }
 
-    // Call this to show or hide the entire bar
     public void SetWallRunBarVisibility(bool isVisible)
     {
         if (wallRunBarContainer != null)
         {
             wallRunBarContainer.SetActive(isVisible);
+        }
+    }
+
+    // 3. Add this new function to update the jump text
+    public void UpdateAirJumpText(int remainingJumps)
+    {
+        if (airJumpText == null) return;
+
+        // We will format the string to be displayed
+        airJumpText.text = $"Air Jumps: {remainingJumps}";
+    }
+
+    // (Optional but Recommended) A function to hide the text when not needed
+    public void SetAirJumpTextVisibility(bool isVisible)
+    {
+        if (airJumpText != null)
+        {
+            airJumpText.gameObject.SetActive(isVisible);
         }
     }
 }

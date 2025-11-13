@@ -64,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
             // 2. Calculate the target velocity based on player input
             Vector3 targetVelocity = (transform.right * currentInput.x + transform.forward * currentInput.z) * moveMentSpeed;
 
+            // 3. Define how quickly the player can change speed (acceleration)
             // This value prevents instant, jerky speed changes. Higher is snappier.
             float maxSpeedChange = decreaseSpeed * Time.fixedDeltaTime;
 
@@ -92,6 +93,7 @@ public class PlayerMovement : MonoBehaviour
         if (!wallDetection.isAirborne)
         {
             usedJumps = 0;
+            playerUI?.UpdateAirJumpText(numJumps - usedJumps);
             wasOnwall = false;
         }
     }
@@ -139,6 +141,7 @@ public class PlayerMovement : MonoBehaviour
     private void StopWallRun()
     {
         playerUI.SetWallRunBarVisibility(false);
+        usedJumps = 0;
         wallRunTimer = 0f;
         wasOnwall = true;
         Debug.Log("Stopped wall run");
@@ -194,5 +197,6 @@ public class PlayerMovement : MonoBehaviour
             body.AddForce(wallNormal * wallJumpAwayForce, ForceMode.Impulse);
             //body.linearVelocity = wallNormal;
         }
+        playerUI?.UpdateAirJumpText(numJumps - usedJumps);
     }
 }

@@ -37,7 +37,6 @@ public class WallDetection : MonoBehaviour
     private void CheckIfAirborne()
     {
         isAirborne = !Physics.SphereCast(transform.position, 1.1f, Vector3.down, out RaycastHit hitInfo, 1.1f, groundLayer, QueryTriggerInteraction.Ignore);
-
     }
 
     private void CheckForWalls()
