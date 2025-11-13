@@ -2414,6 +2414,7 @@ GameObject:
   - component: {fileID: 205297900}
   - component: {fileID: 205297906}
   - component: {fileID: 205297907}
+  - component: {fileID: 205297908}
   m_Layer: 0
   m_Name: PlayerObj
   m_TagString: Player
@@ -2536,7 +2537,7 @@ Transform:
   m_GameObject: {fileID: 205297899}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.24, y: 0, z: 0}
+  m_LocalPosition: {x: 6.55, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2585,11 +2586,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 628911b8ca0f5204fa5bac0ed1da67bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveMentSpeed: 0
-  jumpFactor: 0
+  moveMentSpeed: 10
+  jumpFactor: 100
   fallMultiplier: 2.5
+  numJumps: 1
   playerCamera: {fileID: 330585545}
   lookSensitivity: 70
+--- !u!114 &205297908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 205297899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6599253f9b50e347baee2992121b918, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallDetection
+  runnableWallLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  climbableWallLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  detectionDistance: 0.7
+  isAirborne: 0
+  isNearRunnableWall: 0
+  isNearClimbableWall: 0
+  wallNormal: {x: 0, y: 0, z: 0}
 --- !u!1 &211157175
 GameObject:
   m_ObjectHideFlags: 0
@@ -3521,8 +3549,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.24, y: 2.375, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

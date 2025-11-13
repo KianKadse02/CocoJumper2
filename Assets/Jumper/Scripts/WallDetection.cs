@@ -5,17 +5,18 @@ public class WallDetection : MonoBehaviour
     [Header("Wall Detection Settings")]
     public LayerMask runnableWallLayer;
     public LayerMask climbableWallLayer;
+    public LayerMask groundLayer;
 
     [Tooltip("Capsule radius (0.5) + extra detection range (0.2)")]
     public float detectionDistance = 0.7f; // 0.5 radius + 0.2 buffer
 
     private Rigidbody body;
-    private bool isAirborne;
+    public bool isAirborne;
 
     // Detection results
-    private bool isNearRunnableWall;
-    private bool isNearClimbableWall;
-    private Vector3 wallNormal; // Direction the wall is facing (useful later for wallrun direction)
+    public bool isNearRunnableWall;
+    public bool isNearClimbableWall;
+    public Vector3 wallNormal; // Direction the wall is facing (useful later for wallrun direction)
 
     private void Awake()
     {
@@ -35,8 +36,8 @@ public class WallDetection : MonoBehaviour
 
     private void CheckIfAirborne()
     {
-        // Simple airborne check - you might want to reference PlayerMovement's isGrounded later
-        isAirborne = body.linearVelocity.y != 0;
+        isAirborne = !Physics.SphereCast(transform.position, 1.1f, Vector3.down, out RaycastHit hitInfo, 1.1f, groundLayer, QueryTriggerInteraction.Ignore);
+
     }
 
     private void CheckForWalls()

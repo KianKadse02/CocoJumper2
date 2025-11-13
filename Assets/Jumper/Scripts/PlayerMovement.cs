@@ -13,14 +13,23 @@ public class PlayerMovement : MonoBehaviour
 
     public float fallMultiplier = 2.5f;
 
+    [SerializeField]
+    private int numJumps = 1;
+
+    private int usedJumps = 0;
+
     [Header("Look Settings")]
     public Camera playerCamera;
     public float lookSensitivity = 100f;
     private float xRotation = 0f; // Stores the current up/down rotation of the camera
 
+
+    private WallDetection wallDetection;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
+        wallDetection = GetComponent<WallDetection>();
     }
 
     private void FixedUpdate()
@@ -43,7 +52,10 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (!wallDetection.isAirborne)
+        {
+            usedJumps = 0;
+        }
     }
 
     private void OnMove(InputValue value)
@@ -76,7 +88,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnJump()
     {
-        print("onjump");
-        body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
+        if (!wallDetection.isAirborne)
+        {
+            body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
+        }  else if (wallDetection.isAirborne && usedJumps < numJumps)
+        {
+            body.linearVelocity = new Vector3(body.linearVelocity.x, 0, body.linearVelocity.z);
+            body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
+            usedJumps++;
+        }
     }
 }
