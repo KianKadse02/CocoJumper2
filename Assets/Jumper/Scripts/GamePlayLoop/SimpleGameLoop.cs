@@ -120,6 +120,8 @@ public class SimpleGameLoop : MonoBehaviour
     {
         if (player == null) return;
 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
         player.position = startPosition;
 
         Rigidbody rb = player.GetComponent<Rigidbody>();
