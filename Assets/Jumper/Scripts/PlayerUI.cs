@@ -7,7 +7,7 @@ public class PlayerUI : MonoBehaviour
     [Header("Wall Run UI")]
     public Slider wallRunSlider;
     public GameObject wallRunBarContainer;
-
+    public Text scoreText;
     [Header("Air Jump UI")]
     // 2. Add this variable for the text
     public TextMeshProUGUI airJumpText;
@@ -18,6 +18,12 @@ public class PlayerUI : MonoBehaviour
         {
             wallRunBarContainer.SetActive(false);
         }
+    }
+
+    public void UpdateScoreText(int score)
+    {
+        if (scoreText != null)
+            scoreText.text = $"Score: {score}";
     }
 
     public void UpdateWallRunBar(float currentDuration, float maxDuration)
