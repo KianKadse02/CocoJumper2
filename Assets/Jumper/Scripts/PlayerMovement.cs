@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody body;
     public float moveMentSpeed = 10;
+    public float decreaseSpeed = 75f;
     public float jumpFactor;
     protected Vector3 currentInput;
 
@@ -51,16 +52,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        
 
-        if (wallDetection.isNearRunnableWall)
+        if (wallDetection.isNearRunnableWall && !wasOnwall)
         {
             UpdateWallRun();
         } else
         {
-            Vector3 moveDirection = transform.right * currentInput.x + transform.forward * currentInput.z;
-            Vector3 horizontalVelocity = moveDirection * moveMentSpeed;
-            body.linearVelocity = new Vector3(horizontalVelocity.x, body.linearVelocity.y, horizontalVelocity.z);
+            // 1. Get the current horizontal velocity of the rigidbody
+            Vector3 currentHorizontalVelocity = new Vector3(body.linearVelocity.x, 0, body.linearVelocity.z);
+
+            // 2. Calculate the target velocity based on player input
+            Vector3 targetVelocity = (transform.right * currentInput.x + transform.forward * currentInput.z) * moveMentSpeed;
+
+            // This value prevents instant, jerky speed changes. Higher is snappier.
+            float maxSpeedChange = decreaseSpeed * Time.fixedDeltaTime;
+
+            // 4. Smoothly move the current velocity towards the target velocity
+            Vector3 newHorizontalVelocity = Vector3.MoveTowards(currentHorizontalVelocity, targetVelocity, maxSpeedChange);
+
+            // 5. Apply the new calculated velocity to the rigidbody, preserving the vertical speed
+            body.linearVelocity = new Vector3(newHorizontalVelocity.x, body.linearVelocity.y, newHorizontalVelocity.z);
 
             if (body.linearVelocity.y < 0)
             {
@@ -165,27 +176,23 @@ public class PlayerMovement : MonoBehaviour
         if (!wallDetection.isAirborne && !wallDetection.isNearRunnableWall)
         {
             body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
-        }  else if (wallDetection.isAirborne && usedJumps < numJumps)
+        }  else if (wallDetection.isAirborne && usedJumps < numJumps && !wallDetection.isNearRunnableWall)
         {
             body.linearVelocity = new Vector3(body.linearVelocity.x, 0, body.linearVelocity.z);
             body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
             usedJumps++;
         } else if (wallDetection.isNearRunnableWall && !wasOnwall)
         {
-            body.AddForce(Vector3.up * jumpFactor, ForceMode.Impulse);
-            Vector3 wallNormal = wallDetection.GetWallNormal();
+            Vector3 wallNormal = wallDetection.GetWallNormal() * 100;
 
-            // Jump up and away from wall
-            Vector3 jumpDirection = (Vector3.up + wallNormal).normalized;
 
             // Stop current wall interaction
             StopWallRun();
 
             // Apply jump force
-            body.linearVelocity = Vector3.zero; // Reset velocity first
-            body.AddForce(jumpDirection * wallJumpForce, ForceMode.Impulse);
+            body.AddForce(Vector3.up * 50 * wallJumpForce, ForceMode.Impulse);
             body.AddForce(wallNormal * wallJumpAwayForce, ForceMode.Impulse);
-
+            //body.linearVelocity = wallNormal;
         }
     }
 }
