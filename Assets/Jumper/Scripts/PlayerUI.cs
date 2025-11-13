@@ -7,7 +7,7 @@ public class PlayerUI : MonoBehaviour
     [Header("Wall Run UI")]
     public Slider wallRunSlider;
     public GameObject wallRunBarContainer;
-    public Text scoreText;
+    public TextMeshProUGUI scoreText;
     [Header("Air Jump UI")]
     // 2. Add this variable for the text
     public TextMeshProUGUI airJumpText;
