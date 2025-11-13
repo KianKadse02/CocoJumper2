@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 lookInput;
 
 
-    private WallDetection wallDetection;
+    public WallDetection wallDetection;
 
     [Header("Wall Run Settings")]
     public float wallRunSpeed = 8f;
